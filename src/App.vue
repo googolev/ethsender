@@ -1,27 +1,27 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+  <SenderForm />
 </template>
 
-<script lang="ts">
-import { Options, Vue } from 'vue-class-component';
-import HelloWorld from './components/HelloWorld.vue';
+<script lang="ts" setup>
+import { defineAsyncComponent, onMounted } from 'vue'
+import { getAccount } from './utils/getAccount'
+import { addNetworkListener, checkNetwork } from './utils/network'
 
-@Options({
-  components: {
-    HelloWorld,
-  },
-})
-export default class App extends Vue {}
-</script>
-
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+declare global {
+    interface Window {
+        ethereum?: any;
+    }
 }
-</style>
+
+onMounted(async () => {
+  if (window.ethereum && window.ethereum.isConnected) {
+    addNetworkListener()
+    await checkNetwork()
+    await getAccount()
+  }
+})
+
+const SenderForm = defineAsyncComponent(
+  () => import('./components/SenderForm.vue')
+)
+</script>
