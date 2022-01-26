@@ -1,5 +1,10 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import './index.css'
+import { initDirectives } from './directives/index'
 
-createApp(App).mount('#app')
+export const app = createApp(App)
+
+initDirectives()
+
+app.mount('#app')

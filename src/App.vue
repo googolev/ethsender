@@ -1,5 +1,7 @@
 <template>
-  <SenderForm />
+  <div>
+    <SenderForm />
+  </div>
 </template>
 
 <script lang="ts" setup>

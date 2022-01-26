@@ -18,6 +18,12 @@ export const getAccount = async () => {
   account.value = {
     address: addresses[0],
     balance: balance,
-    humanizedBalance: fromWei(balance)
+    humanizedBalance: Number(fromWei(balance)).toFixed(8)
   }
+}
+
+export const updateBalance = async () => {
+  const balance: string = await web3.eth.getBalance(account.value.address)
+  account.value.balance = balance
+  account.value.humanizedBalance = fromWei(balance)
 }
