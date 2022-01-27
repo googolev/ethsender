@@ -1,5 +1,5 @@
 <template>
-  <form class="sender relative px-4 max-w-md mx-auto my-64">
+  <form class="sender relative p-6 rounded-lg bg-gray-50 shadow-lg max-w-md mx-auto my-64">
     <ConnectWallet />
     <div :class="{ 'blured': !network?.isCorrectNetwork }">
       <div class="mb-6">
@@ -28,7 +28,6 @@ import { defineAsyncComponent, ref, computed } from 'vue'
 import { account } from '../utils/account'
 import { network, sendTransaction, transaction, switchToCorrectNetwork } from '../utils/network'
 import { fromWei } from '../utils/web3'
-import { useFormErrors, useField, useForm } from 'vee-validate'
 import { useValidators, errors } from '../validations/index'
 
 const {
