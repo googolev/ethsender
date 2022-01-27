@@ -13,6 +13,9 @@
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
     "baseUrl": ".",
+    "typeRoots": [
+      "/node_modules/@metamask/providers"
+    ],
     "types": [
       "webpack-env",
       "mocha",

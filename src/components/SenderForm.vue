@@ -1,46 +1,46 @@
 <template>
-  <form class="sender">
+  <form class="sender relative px-4 max-w-md mx-auto my-64">
     <ConnectWallet />
-    <div class="mb-6">
-      <label for="amountToSend" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Amount to send</label>
-      <input type="number" id="amountToSend" v-validate :class="errors.amountToSend ? 'border-red-600' : 'border-gray-300'" name="amountToSend" v-model="amountToSend" step=".001" min="0" model="amountToSend" class="bg-gray-50 border text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-orange-500 dark:focus:border-orange-500">
-    </div>
-    <div class="mb-6">
-      <label for="recieverAddress" class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300">Reciever address</label>
-      <input type="string" id="recieverAddress" @change="validateField('recieverAddress', recieverAddress)" name="recieverAddress" v-model="recieverAddress" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-orange-500 focus:border-orange-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-orange-500 dark:focus:border-orange-500">
-    </div>
-    <ul>
-      <li v-if="account">Balance: {{ `${account.humanizedBalance} ETH` }} <a noopener @click="useMax" class="text-orange-400 cursor-pointer">Use max</a></li>
-      <li v-if="network && network.humanizedGasPrice">Gas price: {{ `${network.humanizedGasPrice} gwei` }}</li>
-    </ul>
-    <!-- {{isAddress(recieverAddress)}} -->
-    <button
-      @click="handleSendTransaction"
-      :disabled="submitDisabled"
-      class="text-white bg-orange-200 hover:bg-orange-300 focus:ring-4 focus:ring-orange-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800">
-        {{buttonText}}
+    <div :class="{ 'blured': !network?.isCorrectNetwork }">
+      <div class="mb-6">
+      <InputField name="amountToSend" validate type="number" label="Amount to send" step="0.001" v-model="amountToSend" />
+      </div>
+      <div class="mb-6">
+        <InputField name="recieverAddress" validate type="string" label="Reciever address" v-model="recieverAddress" />
+      </div>
+      <ul>
+        <li v-if="account">Balance: {{ `${account.humanizedBalance} ETH` }} <a noopener @click="useMax" class="text-orange-400 cursor-pointer">Use max</a></li>
+        <li v-if="network">{{network.humanizedGasPrice ? `Gas price: ${network.humanizedGasPrice} gwei` : 'Gas price: Loading...' }}</li>
+      </ul>
+      <button
+        @click="handleSendTransaction"
+        :disabled="submitDisabled"
+        class="w-full text-lg bg-orange-200 hover:bg-orange-300 focus:ring-4 mt-5 focus:ring-orange-300 font-medium rounded-lg p-5 py-2.5 text-center dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800">
+          {{buttonText}}
       </button>
-      {{errors}}
+    </div>
+    <div class="w-full absolute top-1/2 text-center" :style="{ display: network && !network.isCorrectNetwork ? 'block' : 'none' }">Wrong network. Please, connect to <a class="cursor-pointer text-orange-500" noopener @click="switchToCorrectNetwork">Rinkeby Testnet</a></div>
   </form>
 </template>
 
 <script lang="ts" setup>
 import { defineAsyncComponent, ref, computed } from 'vue'
-import { account } from '../utils/getAccount'
-import { network, sendTransaction, transaction } from '../utils/network'
+import { account } from '../utils/account'
+import { network, sendTransaction, transaction, switchToCorrectNetwork } from '../utils/network'
 import { fromWei } from '../utils/web3'
 import { useFormErrors, useField, useForm } from 'vee-validate'
 import { useValidators, errors } from '../validations/index'
 
 const {
-  validateField
+  validateField,
+  isFieldsIncorrect
 } = useValidators()
 
-const amountToSend = ref<number>(0)
+const amountToSend = ref<number>()
 const recieverAddress = ref<string>('')
 
-const buttonText = computed(() => transaction?.value.txProcessing ? 'Processing' : 'Submit')
-const submitDisabled = computed(() => transaction?.value.txProcessing)
+const buttonText = computed(() => transaction?.value.txProcessing ? 'Processing' : 'Send Transaction')
+const submitDisabled = computed(() => transaction?.value.txProcessing || isFieldsIncorrect(['recieverAddress', 'amountToSend']) || !amountToSend.value || !recieverAddress.value)
 
 const useMax = () => {
   amountToSend.value = Number(account.value.humanizedBalance)
@@ -53,9 +53,13 @@ const handleSendTransaction = async () => {
 }
 
 const clearForm = () => {
-  amountToSend.value = 0
+  amountToSend.value = null
   recieverAddress.value = ''
 }
+
+const InputField = defineAsyncComponent(
+  () => import('./InputField.vue')
+)
 
 const ConnectWallet = defineAsyncComponent(
   () => import('./ConnectWallet.vue')
@@ -64,8 +68,10 @@ const ConnectWallet = defineAsyncComponent(
 
 <style scoped lang="scss">
   .sender {
-    max-width: 480px;
-    padding: 0 1rem;
-    margin: 10rem auto;
+    position: relative;
+    .blured {
+        filter: blur(5px);
+        pointer-events: none;
+      }
   }
 </style>

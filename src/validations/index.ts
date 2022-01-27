@@ -1,24 +1,42 @@
 import { web3 } from '../utils/web3'
 import { reactive } from '@vue/reactivity'
-import { account } from '../utils/getAccount'
+import { account } from '../utils/account'
 
-export const errors = reactive<any>({})
+type ValueType = string | number
 
-export function useValidators () {
-  const schema: any = {
-    recieverAddress: (fieldName: string, value: any) => {
+interface Schema {
+  [key: string]: (fieldName: string, value: any) => void
+}
+
+interface Error {
+  [key: string]: string
+}
+
+interface ValidatorProps {
+  validateField: (fieldName: string, value: ValueType) => void,
+  isFieldsIncorrect: (fields: Array<string>) => void,
+  isRequired: (fieldName: string, value: ValueType) => void,
+  isAddress: (fieldName: string, value: string) => void,
+  max: (fieldName: string, value: ValueType, max: string) => void,
+  min: (fieldName: string, value: ValueType, min: string) => void
+}
+
+export const errors = reactive<Error>({})
+
+export const useValidators = ():ValidatorProps => {
+  const schema: Schema = {
+    recieverAddress: (fieldName: string, value: string) => {
       isRequired(fieldName, value)
       isAddress(fieldName, value)
     },
-    amountToSend: (fieldName: string, value: any) => {
+    amountToSend: (fieldName: string, value: ValueType) => {
       isRequired(fieldName, value)
       max(fieldName, value, account.value.humanizedBalance)
+      min(fieldName, value, '0.00001')
     }
   }
 
-  const validateField = (fieldName: string, value: any) => {
-    console.log('VALIDATE_FIELD')
-    console.log(value)
+  const validateField = (fieldName: string, value: ValueType) => {
     schema[fieldName](fieldName, value)
   }
 
@@ -28,34 +46,52 @@ export function useValidators () {
     }
   }
 
-  const isRequired = (fieldName: string, value:string | number) => {
+  const isFieldsIncorrect = (fields: Array<string>) => {
+    for (const field of fields) {
+      if (errors[field]) {
+        return true
+      }
+    }
+    return false
+  }
+
+  const isRequired = (fieldName: string, value: ValueType) => {
     const message = 'Field is required'
-    if (value) {
+    console.log(value)
+    if (typeof value === 'number' || value.trim()) {
       clearMessage(fieldName, message)
     } else {
-      errors[fieldName] = 'Field is required'
+      errors[fieldName] = message
     }
   }
 
   const isAddress = (fieldName: string, value: string) => {
     const message = 'Address isn\'t correct'
-    if (web3.utils.isAddress(value)) {
+    console.log(web3.utils.isAddress(value))
+    if (value.length && web3.utils.isAddress(value)) {
       clearMessage(fieldName, message)
-    } else {
-      errors[fieldName] = 'Address isn\'t correct'
-      console.log(errors)
+    } else if (value.length) {
+      errors[fieldName] = message
     }
   }
 
-  const max = (fieldName: string, value: string, max: string) => {
+  const max = (fieldName: string, value: ValueType, max: string) => {
     const message = `${max} is maximum value`
-    console.log('max' + value)
     if (Number(value) <= Number(max)) {
       clearMessage(fieldName, message)
     } else {
-      errors[fieldName] = `${max} is maximum value`
-      console.log(errors)
+      errors[fieldName] = message
     }
   }
-  return { isRequired, isAddress, validateField }
+
+  const min = (fieldName:string, value: ValueType, min: string) => {
+    const message = `Should be more then ${min}`
+    if (!value || Number(value) > Number(min)) {
+      clearMessage(fieldName, message)
+    } else {
+      errors[fieldName] = message
+    }
+  }
+
+  return { isRequired, isAddress, validateField, isFieldsIncorrect, min, max }
 }

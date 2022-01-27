@@ -1,9 +1,10 @@
 import Web3 from 'web3'
 import { Unit } from '../interfaces/Network'
+import { MetaMaskInpageProvider } from '@metamask/providers'
 
 declare global {
     interface Window {
-        ethereum?: any;
+        ethereum?: MetaMaskInpageProvider | any;
     }
 }
 

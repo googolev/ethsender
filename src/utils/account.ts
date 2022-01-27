@@ -3,11 +3,9 @@ import { ref } from 'vue'
 import { web3, fromWei } from './web3'
 import { checkNetwork } from './network'
 
-// data
 export const account = ref<Account | null>(null)
 
-// methods
-export const getAccount = async () => {
+export const getAccount = async ():Promise<void> => {
   const addresses: Array<string> = await window.ethereum.request({
     method: 'eth_requestAccounts'
   })
@@ -22,7 +20,7 @@ export const getAccount = async () => {
   }
 }
 
-export const updateBalance = async () => {
+export const updateBalance = async ():Promise<void> => {
   const balance: string = await web3.eth.getBalance(account.value.address)
   account.value.balance = balance
   account.value.humanizedBalance = fromWei(balance)

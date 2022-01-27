@@ -6,12 +6,14 @@
 
 <script lang="ts" setup>
 import { defineAsyncComponent, onMounted } from 'vue'
-import { getAccount } from './utils/getAccount'
+import { getAccount } from './utils/account'
 import { addNetworkListener, checkNetwork } from './utils/network'
+import { MetaMaskInpageProvider } from '@metamask/providers'
+import '../src/assets/index.scss'
 
 declare global {
     interface Window {
-        ethereum?: any;
+        ethereum?: MetaMaskInpageProvider | any;
     }
 }
 
