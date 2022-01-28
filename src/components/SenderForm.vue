@@ -19,7 +19,7 @@
           {{buttonText}}
       </button>
     </div>
-    <div class="w-full absolute top-1/2 text-center" :style="{ display: network && !network.isCorrectNetwork ? 'block' : 'none' }">Wrong network. Please, connect to <a class="cursor-pointer text-orange-500" noopener @click="switchToCorrectNetwork">Rinkeby Testnet</a></div>
+    <div class="w-full absolute top-1/2 left-0 text-center" :style="{ display: network && !network.isCorrectNetwork ? 'block' : 'none' }">Wrong network. Please, connect to <a class="cursor-pointer text-orange-500" noopener @click="switchToCorrectNetwork">Rinkeby Testnet</a></div>
   </form>
 </template>
 

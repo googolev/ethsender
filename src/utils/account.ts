@@ -23,5 +23,5 @@ export const getAccount = async ():Promise<void> => {
 export const updateBalance = async ():Promise<void> => {
   const balance: string = await web3.eth.getBalance(account.value.address)
   account.value.balance = balance
-  account.value.humanizedBalance = fromWei(balance)
+  account.value.humanizedBalance = Number(fromWei(balance)).toFixed(8)
 }
