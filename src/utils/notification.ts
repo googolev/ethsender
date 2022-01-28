@@ -10,7 +10,7 @@ const BG_COLOR = {
 export const createNotification = async ({ message, type }: Notification):Promise<void> => {
   const container = document.createElement('div')
   container.style.width = 'fit-content'
-  container.classList.add(BG_COLOR[type], 'fixed', 'top-4', 'left-0', 'right-0', 'mx-auto', 'flex', 'items-center', 'justify-between', 'p-4', 'rounded-md')
+  container.classList.add('notification', BG_COLOR[type], 'fixed', 'top-4', 'left-0', 'right-0', 'mx-auto', 'flex', 'items-center', 'justify-between', 'p-4', 'rounded-md')
 
   const rawHTML =
       `<div>

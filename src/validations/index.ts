@@ -33,6 +33,9 @@ export const useValidators = ():ValidatorProps => {
       isRequired(fieldName, value)
       max(fieldName, value, account.value.humanizedBalance)
       min(fieldName, value, '0.00001')
+    },
+    TestInput: (fieldName: string, value: ValueType) => {
+      isRequired(fieldName, value)
     }
   }
 

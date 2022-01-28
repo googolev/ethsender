@@ -18,7 +18,9 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 0,
     '@typescript-eslint/no-unused-vars': 0,
     'no-unused-vars': 0,
-    '@typescript-eslint/no-explicit-any': 0
+    'no-unused-expressions': 0,
+    '@typescript-eslint/no-explicit-any': 0,
+    '@typescript-eslint/ban-ts-comment': 0
   },
   overrides: [
     {
@@ -28,6 +30,15 @@ module.exports = {
       ],
       env: {
         mocha: true
+      }
+    },
+    {
+      files: [
+        '**/__tests__/*.{j,t}s?(x)',
+        '**/tests/unit/**/*.spec.{j,t}s?(x)'
+      ],
+      env: {
+        jest: true
       }
     }
   ]

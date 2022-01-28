@@ -14,12 +14,16 @@
     "sourceMap": true,
     "baseUrl": ".",
     "typeRoots": [
-      "/node_modules/@metamask/providers"
+      "node_modules/@metamask/providers",
+      "node_modules/@types"
     ],
     "types": [
       "webpack-env",
       "mocha",
-      "chai"
+      "chai",
+      "jest",
+      "node",
+      "@types/jest"
     ],
     "paths": {
       "@/*": [
@@ -38,7 +42,8 @@
     "src/**/*.tsx",
     "src/**/*.vue",
     "tests/**/*.ts",
-    "tests/**/*.tsx"
+    "tests/**/*.tsx",
+    "src/**/*"
   ],
   "exclude": [
     "node_modules"

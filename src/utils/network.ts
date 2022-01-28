@@ -15,16 +15,21 @@ export const transaction = ref<Transaction>({
 })
 
 export const checkNetwork = async (networkId?: number):Promise<boolean> => {
-  const currentNetworkId = Number(networkId || await web3.eth.net.getId())
+  let currentNetworkId
+  try {
+    currentNetworkId = Number(networkId || await web3.eth.net.getId())
 
-  network.value = {
-    id: currentNetworkId,
-    isCorrectNetwork: ACCEPT_NETWORK.id === currentNetworkId
-  }
-  await checkGasPrice()
+    network.value = {
+      id: currentNetworkId,
+      isCorrectNetwork: ACCEPT_NETWORK.id === currentNetworkId
+    }
+    await checkGasPrice()
 
-  if (!networkId) {
-    return ACCEPT_NETWORK.id === currentNetworkId
+    if (!networkId) {
+      return ACCEPT_NETWORK.id === currentNetworkId
+    }
+  } catch (e) {
+    createNotification({ type: 'error', message: e.message })
   }
 }
 

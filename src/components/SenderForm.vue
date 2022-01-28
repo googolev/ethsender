@@ -9,13 +9,13 @@
         <InputField name="recieverAddress" validate type="string" label="Reciever address" v-model="recieverAddress" />
       </div>
       <ul>
-        <li v-if="account">Balance: {{ `${account.humanizedBalance} ETH` }} <a noopener @click="useMax" class="text-orange-400 cursor-pointer">Use max</a></li>
+        <li v-if="account">Balance: {{ `${account.humanizedBalance} ETH` }} <a noopener @click="useMax" class="use-max text-orange-400 cursor-pointer">Use max</a></li>
         <li v-if="network">{{network.humanizedGasPrice ? `Gas price: ${network.humanizedGasPrice} gwei` : 'Gas price: Loading...' }}</li>
       </ul>
       <button
         @click="handleSendTransaction"
         :disabled="submitDisabled"
-        class="w-full text-lg bg-orange-200 hover:bg-orange-300 focus:ring-4 mt-5 focus:ring-orange-300 font-medium rounded-lg p-5 py-2.5 text-center dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800">
+        class="submit w-full text-lg bg-orange-200 hover:bg-orange-300 focus:ring-4 mt-5 focus:ring-orange-300 font-medium rounded-lg p-5 py-2.5 text-center dark:bg-orange-600 dark:hover:bg-orange-700 dark:focus:ring-orange-800">
           {{buttonText}}
       </button>
     </div>
@@ -27,7 +27,6 @@
 import { defineAsyncComponent, ref, computed } from 'vue'
 import { account } from '../utils/account'
 import { network, sendTransaction, transaction, switchToCorrectNetwork } from '../utils/network'
-import { fromWei } from '../utils/web3'
 import { useValidators, errors } from '../validations/index'
 
 const {
